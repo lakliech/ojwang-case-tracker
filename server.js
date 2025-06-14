@@ -7,6 +7,7 @@ const path = require('path');
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static('public'));
 app.use(cookieParser());
@@ -27,8 +28,9 @@ const Conflict = mongoose.model('Conflict', new mongoose.Schema({
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
-  //useNewUrlParser: true, useUnifiedTopology: true
-});
+  useNewUrlParser: true, useUnifiedTopology: true
+}).then(() => console.log('✅ Connected to MongoDB'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Auth Middleware
 function isAuthenticated(req, res, next) {

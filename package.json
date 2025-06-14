@@ -1,0 +1,12 @@
+{
+  "name": "albert-ojwang-case",
+  "version": "1.0.0",
+  "description": "Crowdsourced tracker for the Albert Ojwang case",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

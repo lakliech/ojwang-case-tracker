@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head><title>Admin Panel</title></head>
+<body>
+  <h2>Admin Dashboard</h2>
+  <div id="adminContent"></div>
+  <script>
+    async function fetchData() {
+      const res = await fetch('/admin/data');
+      const data = await res.json();
+
+      let html = '<h3>Unapproved Events</h3>';
+      data.events.forEach(e => {
+        html += `<div>
+          <b>${new Date(e.datetime).toLocaleString()}</b><br>
+          ${e.description}<br>
+          <button onclick="approve('event','${e._id}')">Approve</button>
+          <button onclick="remove('event','${e._id}')">Delete</button>
+        </div><hr>`;
+      });
+
+      html += '<h3>Unapproved Conflicts</h3>';
+      data.conflicts.forEach(c => {
+        html += `<div>
+          ${c.description}<br>
+          <button onclick="approve('conflict','${c._id}')">Approve</button>
+          <button onclick="remove('conflict','${c._id}')">Delete</button>
+        </div><hr>`;
+      });
+
+      document.getElementById('adminContent').innerHTML = html;
+    }
+
+    async function approve(type, id) {
+      await fetch('/admin/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, id })
+      });
+      fetchData();
+    }
+
+    async function remove(type, id) {
+      await fetch('/admin/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, id })
+      });
+      fetchData();
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>

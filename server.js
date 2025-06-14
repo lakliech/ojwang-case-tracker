@@ -27,7 +27,7 @@ const Conflict = mongoose.model('Conflict', new mongoose.Schema({
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true, useUnifiedTopology: true
+  //useNewUrlParser: true, useUnifiedTopology: true
 });
 
 // Auth Middleware

@@ -21,91 +21,72 @@
 <body>
 
   <h1>Albert Ojwang Case Tracker</h1>
-  <nav>
-    <a href="#timeline">📅 Timeline</a>
-    <a href="#conflicts">⚠️ Contradictions</a>
-    <a href="#submit">✏️ Submit Info</a>
-  </nav>
 
-  <section id="timeline">
+  <section id="timeline-section">
     <h2>🕒 Timeline of Events</h2>
-    <div class="loading">Loading timeline…</div>
+    <table>
+      <thead>
+        <tr><th>Date/Time</th><th>Description</th></tr>
+      </thead>
+      <tbody id="timeline-body">
+        <tr><td colspan="2" class="loading">Loading...</td></tr>
+      </tbody>
+    </table>
   </section>
 
-  <section id="conflicts">
+  <section id="conflicts-section">
     <h2>🔍 Contradictions in Official Narrative</h2>
-    <div class="loading">Loading conflicts…</div>
-  </section>
-
-  <section id="submit">
-    <h2>✏️ Submit New Info</h2>
-    <form id="crowdForm">
-      <label>Date/Time:<br><input type="datetime-local" name="datetime" required></label><br><br>
-      <label>Type:<br>
-        <select name="type" required>
-          <option value="" disabled selected>Select...</option>
-          <option value="timeline">Timeline Event</option>
-          <option value="conflicts">Contradiction</option>
-        </select>
-      </label><br><br>
-      <label>Description:<br><textarea name="description" rows="4" required></textarea></label><br><br>
-      <button type="submit">Submit</button>
-    </form>
-    <div id="formMsg"></div>
+    <table>
+      <thead>
+        <tr><th>Issue</th><th>Description</th></tr>
+      </thead>
+      <tbody id="conflict-body">
+        <tr><td colspan="2" class="loading">Loading...</td></tr>
+      </tbody>
+    </table>
   </section>
 
   <script>
-    async function loadData() {
+    async function loadReports() {
       try {
-        const res = await fetch('/data');
-        const { timeline, conflicts } = await res.json();
-        renderTable('timeline', timeline, 'highlight');
-        renderTable('conflicts', conflicts, 'conflict');
+        const res = await fetch('/api/reports');
+        const reports = await res.json();
+
+        const timelineTable = document.getElementById('timeline-body');
+        const conflictTable = document.getElementById('conflict-body');
+
+        timelineTable.innerHTML = '';
+        conflictTable.innerHTML = '';
+
+        reports.forEach(report => {
+          if (report.category === 'timeline') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${new Date(report.datetime || report.date).toLocaleString()}</td>
+              <td>${report.description || report.event}<br><small><em>${report.source || ''}</em></small></td>
+            `;
+            timelineTable.appendChild(row);
+          }
+
+          if (report.category === 'conflict') {
+            const row = document.createElement('tr');
+            row.classList.add('conflict');
+            row.innerHTML = `
+              <td>${report.issue || '—'}</td>
+              <td>${report.description}<br><small><em>${report.source || ''}</em></small></td>
+            `;
+            conflictTable.appendChild(row);
+          }
+        });
       } catch (err) {
-        document.querySelectorAll('.loading').forEach(el => el.textContent = 'Failed to load data.');
+        console.error('Failed to load reports:', err);
       }
     }
 
-    function renderTable(sectionId, items, rowClass) {
-      const sec = document.getElementById(sectionId);
-      const tbl = document.createElement('table');
-      tbl.innerHTML = '<thead><tr><th>Date/Time</th><th>Description</th></tr></thead>';
-      const tbody = document.createElement('tbody');
-      items.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
-      items.forEach(item => {
-        const tr = document.createElement('tr');
-        if (item.highlight && sectionId === 'timeline') tr.classList.add(rowClass);
-        else if (sectionId === 'conflicts') tr.classList.add(rowClass);
-        tr.innerHTML = `<td>${new Date(item.datetime).toLocaleString()}</td><td>${item.description}</td>`;
-        tbody.appendChild(tr);
-      });
-      tbl.appendChild(tbody);
-      sec.innerHTML = '';
-      sec.appendChild(tbl);
-    }
-
-    document.getElementById('crowdForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      const form = e.target;
-      const data = {
-        datetime: form.datetime.value,
-        description: form.description.value.trim(),
-        highlight: false
-      };
-      const endpoint = form.type.value;
-      const res = await fetch(`/${endpoint}`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-      });
-      const msg = await res.text();
-      document.getElementById('formMsg').textContent = res.ok ? '✅ Submitted' : '❌ Error';
-      form.reset();
-      loadData();
-    });
-
-    loadData();
+    loadReports();
   </script>
+<<<<<<< HEAD
+=======
   <script>
   fetch('/api/reports')
     .then(res => res.json())
@@ -159,6 +140,7 @@
 
   loadReports();
 </script>
+>>>>>>> dd8e88ecb3122c616d90d156a8b1423e58c26d88
 
 </body>
 </html>

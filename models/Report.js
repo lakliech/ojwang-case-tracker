@@ -1,13 +1,18 @@
-// models/Report.js
 const mongoose = require('mongoose');
 
 const reportSchema = new mongoose.Schema({
-  date: { type: String, required: true },
-  description: { type: String, required: true },
-  category: { type: String, enum: ['event', 'conflict'], default: 'event' },
-  submittedBy: { type: String },
+  date: String,
+  datetime: Date,           // for timeline
+  event: String,            // for timeline
+  issue: String,            // for contradiction
+  description: String,
+  source: String,
+  category: {
+    type: String,
+    enum: ['timeline', 'conflict'],
+    required: true
+  },
   timestamp: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Report', reportSchema);
-

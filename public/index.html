@@ -1,3 +1,5 @@
+# Regenerate the enhanced index.html file with sidebar form, nav links, and terms of use section
+html_with_layout = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,89 +7,173 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Albert Ojwang Case Tracker</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2em; background: #f9f9f9; color: #333; }
-    nav a { margin-right: 1em; text-decoration: none; color: #007BFF; }
-    nav a:hover { text-decoration: underline; }
-    h1, h2 { color: #222; }
-    section { margin-bottom: 2em; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1em; }
-    th, td { border: 1px solid #ddd; padding: 0.75em; text-align: left; vertical-align: top; }
-    th { background-color: #eee; }
-    .highlight { background-color: #fff3cd; }
-    .conflict { background-color: #f8d7da; }
-    .loading { font-style: italic; color: #666; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f9f9f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: #007BFF;
+      color: #fff;
+      padding: 1em;
+      text-align: center;
+    }
+    nav {
+      background: #e9ecef;
+      padding: 0.5em 1em;
+    }
+    nav a {
+      margin-right: 1em;
+      text-decoration: none;
+      color: #007BFF;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      display: flex;
+      flex-direction: row;
+      padding: 1em;
+    }
+    aside {
+      flex: 1;
+      max-width: 350px;
+      padding: 1em;
+      background: #ffffff;
+      border-right: 1px solid #ccc;
+    }
+    section {
+      flex: 3;
+      padding: 1em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1em;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.75em;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background-color: #eee;
+    }
+    .conflict {
+      background-color: #f8d7da;
+    }
     form input, form textarea, form select, form button {
       display: block;
       margin: 0.5em 0;
       padding: 0.5em;
       width: 100%;
-      max-width: 500px;
+    }
+    footer {
+      background: #f1f1f1;
+      padding: 1em;
+      text-align: center;
+      font-size: 0.85em;
+      margin-top: 2em;
+      border-top: 1px solid #ccc;
     }
   </style>
 </head>
 <body>
 
-  <h1>Albert Ojwang Case Tracker</h1>
+  <header>
+    <h1>Albert Ojwang Case Tracker</h1>
+  </header>
 
-  <section id="timeline-section">
-    <h2>🕒 Timeline of Events</h2>
-    <table>
-      <thead>
-        <tr><th>Date/Time</th><th>Description</th></tr>
-      </thead>
-      <tbody id="timeline-body">
-        <tr><td colspan="2" class="loading">Loading...</td></tr>
-      </tbody>
-    </table>
-  </section>
+  <nav>
+    <a href="#timeline">🕒 Timelines</a>
+    <a href="#conflicts">⚠️ Contradictions</a>
+    <a href="#terms">📜 Terms of Use</a>
+  </nav>
 
-  <section id="conflicts-section">
-    <h2>🔍 Contradictions in Official Narrative</h2>
-    <table>
-      <thead>
-        <tr><th>Issue</th><th>Description</th></tr>
-      </thead>
-      <tbody id="conflict-body">
-        <tr><td colspan="2" class="loading">Loading...</td></tr>
-      </tbody>
-    </table>
-  </section>
+  <main>
+    <aside>
+      <h2>✍️ Submit Info</h2>
+      <form id="submission-form">
+        <label>
+          Type:
+          <select name="category" required>
+            <option value="">--Select--</option>
+            <option value="timeline">Timeline Event</option>
+            <option value="conflict">Contradiction</option>
+          </select>
+        </label>
+        <label>
+          Date/Time:
+          <input type="datetime-local" name="datetime" required />
+        </label>
+        <label>
+          Title or Issue:
+          <input type="text" name="issue" />
+        </label>
+        <label>
+          Description:
+          <textarea name="description" rows="4" required></textarea>
+        </label>
+        <label>
+          Source:
+          <input type="text" name="source" />
+        </label>
+        <label>
+          Your Name:
+          <input type="text" name="submittedBy" />
+        </label>
+        <button type="submit">Submit</button>
+        <div id="form-response"></div>
+      </form>
+    </aside>
 
-  <section id="submission-section">
-    <h2>✍️ Contribute a Report</h2>
-    <form id="submission-form">
-      <label>
-        Type:
-        <select name="category" required>
-          <option value="">--Select--</option>
-          <option value="timeline">Timeline Event</option>
-          <option value="conflict">Contradiction</option>
-        </select>
-      </label>
-      <label>
-        Date/Time:
-        <input type="datetime-local" name="datetime" required />
-      </label>
-      <label>
-        Title or Issue (for conflict):
-        <input type="text" name="issue" />
-      </label>
-      <label>
-        Description:
-        <textarea name="description" rows="4" required></textarea>
-      </label>
-      <label>
-        Source (optional):
-        <input type="text" name="source" />
-      </label>
-      <label>
-        Your Name (optional):
-        <input type="text" name="submittedBy" />
-      </label>
-      <button type="submit">Submit</button>
-      <div id="form-response"></div>
-    </form>
-  </section>
+    <section>
+      <div id="timeline">
+        <h2>🕒 Timeline of Events</h2>
+        <table>
+          <thead>
+            <tr><th>Date/Time</th><th>Description</th></tr>
+          </thead>
+          <tbody id="timeline-body">
+            <tr><td colspan="2">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="conflicts">
+        <h2>⚠️ Contradictions in Official Narrative</h2>
+        <table>
+          <thead>
+            <tr><th>Issue</th><th>Description</th></tr>
+          </thead>
+          <tbody id="conflict-body">
+            <tr><td colspan="2">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="terms">
+        <h2>📜 Terms of Use</h2>
+        <p>This website presents publicly contributed and publicly sourced information concerning the death of Albert Ojwang. While we aim to keep the timeline and events accurate and well-documented, no guarantee is given regarding completeness or correctness.</p>
+        <p>By using this website, you agree that:</p>
+        <ul>
+          <li>The site is intended for educational and informational purposes only.</li>
+          <li>Content is contributed by the public and may not have been independently verified.</li>
+          <li>No legal liability is assumed for the accuracy of any submission.</li>
+        </ul>
+        <p><strong>Disclaimer:</strong> The information on this website is aggregated from public sources. It is presented for educational use and public discourse. It does not represent any formal legal position or conclusion.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 Albert Ojwang Tracker. Public Data. Educational Use Only.
+  </footer>
 
   <script>
     async function loadReports() {
@@ -131,11 +217,6 @@
       const form = e.target;
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
-
-      if (!data.category || !data.description || !data.datetime) {
-        return alert('Please fill out the required fields.');
-      }
-
       data.date = data.datetime;
 
       try {
@@ -162,3 +243,11 @@
 
 </body>
 </html>
+"""
+
+# Save to file
+layout_path = "/mnt/data/index_with_sidebar_layout.html"
+with open(layout_path, "w") as f:
+    f.write(html_with_layout.strip())
+
+layout_path

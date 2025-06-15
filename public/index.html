@@ -120,6 +120,45 @@
       });
     });
 </script>
+<script>
+  async function loadReports() {
+    try {
+      const res = await fetch('/api/reports');
+      const reports = await res.json();
+
+      const timelineTable = document.getElementById('timeline-body');
+      const conflictTable = document.getElementById('conflict-body');
+
+      timelineTable.innerHTML = '';
+      conflictTable.innerHTML = '';
+
+      reports.forEach(report => {
+        if (report.category === 'timeline') {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${new Date(report.datetime || report.date).toLocaleString()}</td>
+            <td>${report.description || report.event}<br><small><em>${report.source || ''}</em></small></td>
+          `;
+          timelineTable.appendChild(row);
+        }
+
+        if (report.category === 'conflict') {
+          const row = document.createElement('tr');
+          row.classList.add('conflict');
+          row.innerHTML = `
+            <td>${report.issue || '—'}</td>
+            <td>${report.description}<br><small><em>${report.source || ''}</em></small></td>
+          `;
+          conflictTable.appendChild(row);
+        }
+      });
+    } catch (err) {
+      console.error('Failed to load reports:', err);
+    }
+  }
+
+  loadReports();
+</script>
 
 </body>
 </html>

@@ -1,84 +1,271 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Albert Ojwang Case Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Satoshi:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --kenya-black: #000000;
+      --kenya-red: #BB0000;
+      --kenya-green: #006600;
+      --kenya-white: #FFFFFF;
+      --kenya-gray: #F0F0F0;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Satoshi', Arial, sans-serif;
       margin: 0;
-      background: #f9f9f9;
-      color: #333;
-      display: flex;
-      flex-direction: column;
+      background: var(--kenya-gray);
+      color: var(--kenya-black);
+      line-height: 1.6;
     }
+    
     header {
-      background: #007BFF;
-      color: #fff;
-      padding: 1em;
+      background: linear-gradient(to right, var(--kenya-black), var(--kenya-red), var(--kenya-green));
+      color: var(--kenya-white);
+      padding: 1.5em;
       text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+    
+    h1 {
+      font-weight: 700;
+      font-size: 2.2rem;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+    
     nav {
-      background: #e9ecef;
-      padding: 0.5em 1em;
+      background: var(--kenya-white);
+      padding: 0.75em 1.5em;
+      border-bottom: 3px solid var(--kenya-red);
+      display: flex;
+      gap: 1.5em;
     }
+    
     nav a {
-      margin-right: 1em;
       text-decoration: none;
-      color: #007BFF;
-      font-weight: bold;
+      color: var(--kenya-black);
+      font-weight: 500;
+      font-size: 1.05rem;
+      transition: all 0.3s ease;
+      padding: 0.5em 0;
+      position: relative;
     }
+    
     nav a:hover {
-      text-decoration: underline;
+      color: var(--kenya-red);
     }
+    
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--kenya-green);
+      transition: width 0.3s ease;
+    }
+    
+    nav a:hover::after {
+      width: 100%;
+    }
+    
     main {
       display: flex;
       flex-direction: row;
-      padding: 1em;
+      padding: 1.5em;
+      gap: 1.5em;
+      max-width: 1600px;
+      margin: 0 auto;
     }
+    
     aside {
       flex: 1;
-      max-width: 350px;
-      padding: 1em;
-      background: #ffffff;
-      border-right: 1px solid #ccc;
+      max-width: 300px;
+      padding: 1.5em;
+      background: var(--kenya-white);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-top: 4px solid var(--kenya-green);
     }
+    
+    .right-sidebar {
+      flex: 1;
+      max-width: 300px;
+      padding: 1.5em;
+      background: var(--kenya-white);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-top: 4px solid var(--kenya-black);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5em;
+    }
+    
     section {
       flex: 3;
-      padding: 1em;
+      padding: 1.5em;
+      background: var(--kenya-white);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-top: 4px solid var(--kenya-red);
     }
+    
+    h2 {
+      color: var(--kenya-black);
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin-top: 0;
+      margin-bottom: 1em;
+      padding-bottom: 0.5em;
+      border-bottom: 2px solid var(--kenya-gray);
+    }
+    
+    h3 {
+      color: var(--kenya-black);
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+    
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 1em;
+      font-size: 0.95rem;
     }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 0.75em;
-      text-align: left;
-      vertical-align: top;
-    }
+    
     th {
-      background-color: #eee;
+      background-color: var(--kenya-black);
+      color: var(--kenya-white);
+      font-weight: 500;
+      padding: 1em;
+      text-align: left;
     }
+    
+    td {
+      border: 1px solid var(--kenya-gray);
+      padding: 1em;
+      background: var(--kenya-white);
+    }
+    
     .conflict {
-      background-color: #f8d7da;
+      background-color: rgba(187, 0, 0, 0.08);
+      border-left: 3px solid var(--kenya-red);
     }
-    form input, form textarea, form select, form button {
+    
+    form label {
       display: block;
-      margin: 0.5em 0;
-      padding: 0.5em;
+      margin: 1em 0 0.5em;
+      font-weight: 500;
+      color: var(--kenya-black);
+    }
+    
+    form input, form textarea, form select {
+      width: 100%;
+      padding: 0.8em;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: 'Satoshi', sans-serif;
+      transition: border 0.3s ease;
+    }
+    
+    form input:focus, form textarea:focus, form select:focus {
+      outline: none;
+      border-color: var(--kenya-green);
+      box-shadow: 0 0 0 2px rgba(0, 102, 0, 0.2);
+    }
+    
+    form button {
+      background: var(--kenya-black);
+      color: white;
+      border: none;
+      padding: 0.8em 1.5em;
+      margin-top: 1.5em;
+      border-radius: 4px;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
       width: 100%;
     }
+    
+    form button:hover {
+      background: var(--kenya-red);
+      transform: translateY(-1px);
+    }
+    
     footer {
-      background: #f1f1f1;
-      padding: 1em;
+      background: var(--kenya-black);
+      color: var(--kenya-white);
+      padding: 1.5em;
       text-align: center;
-      font-size: 0.85em;
+      font-size: 0.9rem;
       margin-top: 2em;
-      border-top: 1px solid #ccc;
+    }
+    
+    .gallery-image {
+      width: 100%;
+      border-radius: 6px;
+      margin-bottom: 0.5em;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .gallery-image:hover {
+      transform: scale(1.02);
+    }
+    
+    .image-caption {
+      font-size: 0.85rem;
+      text-align: center;
+      color: #666;
+      margin-top: -0.5em;
+      margin-bottom: 1.5em;
+    }
+    
+    .sidebar-title {
+      color: var(--kenya-black);
+      border-bottom: 2px solid var(--kenya-gray);
+      padding-bottom: 0.5em;
+      margin-bottom: 1em;
+      font-weight: 600;
+      font-size: 1.3rem;
+    }
+    
+    #form-response {
+      margin-top: 1em;
+      padding: 0.5em;
+      border-radius: 4px;
+      text-align: center;
+      font-weight: 500;
+    }
+    
+    ul {
+      padding-left: 1.5em;
+    }
+    
+    li {
+      margin-bottom: 0.5em;
+    }
+    
+    strong {
+      color: var(--kenya-black);
+    }
+    
+    @media (max-width: 1200px) {
+      main {
+        flex-direction: column;
+      }
+      
+      aside, .right-sidebar, section {
+        max-width: 100%;
+      }
     }
   </style>
 </head>
@@ -96,37 +283,31 @@
 
   <main>
     <aside>
-      <h2>✍️ Submit Info</h2>
+      <h2 class="sidebar-title">✍️ Submit Information</h2>
       <form id="submission-form">
-        <label>
-          Type:
-          <select name="category" required>
-            <option value="">--Select--</option>
-            <option value="timeline">Timeline Event</option>
-            <option value="conflict">Contradiction</option>
-          </select>
-        </label>
-        <label>
-          Date/Time:
-          <input type="datetime-local" name="datetime" required />
-        </label>
-        <label>
-          Title or Issue:
-          <input type="text" name="issue" />
-        </label>
-        <label>
-          Description:
-          <textarea name="description" rows="4" required></textarea>
-        </label>
-        <label>
-          Source:
-          <input type="text" name="source" />
-        </label>
-        <label>
-          Your Name:
-          <input type="text" name="submittedBy" />
-        </label>
-        <button type="submit">Submit</button>
+        <label for="category">Type:</label>
+        <select name="category" id="category" required>
+          <option value="">--Select--</option>
+          <option value="timeline">Timeline Event</option>
+          <option value="conflict">Contradiction</option>
+        </select>
+        
+        <label for="datetime">Date/Time:</label>
+        <input type="datetime-local" name="datetime" id="datetime" required />
+        
+        <label for="issue">Title or Issue:</label>
+        <input type="text" name="issue" id="issue" />
+        
+        <label for="description">Description:</label>
+        <textarea name="description" id="description" rows="4" required></textarea>
+        
+        <label for="source">Source:</label>
+        <input type="text" name="source" id="source" />
+        
+        <label for="submittedBy">Your Name:</label>
+        <input type="text" name="submittedBy" id="submittedBy" />
+        
+        <button type="submit">Submit Information</button>
         <div id="form-response"></div>
       </form>
     </aside>
@@ -139,7 +320,7 @@
             <tr><th>Date/Time</th><th>Description</th></tr>
           </thead>
           <tbody id="timeline-body">
-            <tr><td colspan="2">Loading...</td></tr>
+            <tr><td colspan="2">Loading timeline data...</td></tr>
           </tbody>
         </table>
       </div>
@@ -151,7 +332,7 @@
             <tr><th>Issue</th><th>Description</th></tr>
           </thead>
           <tbody id="conflict-body">
-            <tr><td colspan="2">Loading...</td></tr>
+            <tr><td colspan="2">Loading contradictions data...</td></tr>
           </tbody>
         </table>
       </div>
@@ -168,10 +349,41 @@
         <p><strong>Disclaimer:</strong> The information on this website is aggregated from public sources. It is presented for educational use and public discourse. It does not represent any formal legal position or conclusion.</p>
       </div>
     </section>
+
+    <div class="right-sidebar">
+      <h2 class="sidebar-title">👤 Albert Ojwang</h2>
+      <div>
+        <img src="https://via.placeholder.com/400x300?text=Albert+Ojwang+Photo+1" alt="Albert Ojwang" class="gallery-image">
+        <p class="image-caption">Albert Ojwang in 2022</p>
+      </div>
+      <div>
+        <img src="https://via.placeholder.com/400x300?text=Albert+Ojwang+Photo+2" alt="Albert Ojwang" class="gallery-image">
+        <p class="image-caption">Public appearance in Nairobi</p>
+      </div>
+      
+      <div>
+        <h3 class="sidebar-title">Biographical Information</h3>
+        <p><strong>Full Name:</strong> Albert Ojwang</p>
+        <p><strong>Occupation:</strong> [Add occupation]</p>
+        <p><strong>Date of Birth:</strong> [Add DOB]</p>
+        <p><strong>Date of Death:</strong> [Add date]</p>
+        <p><strong>Location:</strong> [Add location]</p>
+      </div>
+      
+      <div>
+        <h3 class="sidebar-title">Key Facts</h3>
+        <ul>
+          <li>Fact 1 about the case</li>
+          <li>Important detail about events</li>
+          <li>Notable aspect of investigation</li>
+        </ul>
+      </div>
+    </div>
   </main>
 
   <footer>
-    &copy; 2025 Albert Ojwang Tracker. Public Data. Educational Use Only.
+    <p>&copy; 2025 Albert Ojwang Case Tracker. Public Data. Educational Use Only.</p>
+    <p style="margin-top: 0.5em; font-size: 0.8em;">Justice for Albert Ojwang</p>
   </footer>
 
   <script>
@@ -227,6 +439,7 @@
 
         if (res.ok) {
           document.getElementById('form-response').innerText = '✅ Submitted successfully';
+          document.getElementById('form-response').style.color = 'var(--kenya-green)';
           form.reset();
           loadReports();
         } else {
@@ -234,6 +447,7 @@
         }
       } catch (err) {
         document.getElementById('form-response').innerText = '❌ Submission failed';
+        document.getElementById('form-response').style.color = 'var(--kenya-red)';
       }
     });
 
@@ -242,4 +456,3 @@
 
 </body>
 </html>
-

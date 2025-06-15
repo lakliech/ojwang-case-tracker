@@ -497,7 +497,45 @@
           </tbody>
         </table>
       </div>
-
+<!-- Replace the entire twitter-feed div with this updated version -->
+<div class="x-feed" id="x-feed">
+  <div class="x-header">
+    <svg class="x-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="currentColor"/>
+    </svg>
+    <h2 style="color: white; margin-left: 10px;">Case Discussions on X</h2>
+  </div>
+  
+  <div class="x-filters">
+    <button class="x-filter-btn active" data-filter="all">All</button>
+    <button class="x-filter-btn" data-filter="hashtag">#ArrestEliudLagat</button>
+    <button class="x-filter-btn" data-filter="hashtag">#JusticeForAlbert</button>
+    <button class="x-filter-btn" data-filter="account">@DCI_Kenya</button>
+    <button class="x-filter-btn" data-filter="account">@C_NyaKundiH</button>
+    <button class="x-filter-btn" data-filter="account">@NPSOfficial_KE</button>
+  </div>
+  
+  <div class="x-posts-container" id="x-posts-container">
+    <!-- Loading indicator -->
+    <div class="loading-spinner" style="text-align: center; padding: 2em;">
+      <svg width="50" height="50" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#1d9bf0">
+        <g fill="none" fill-rule="evenodd">
+          <g transform="translate(1 1)" stroke-width="2">
+            <circle stroke-opacity=".5" cx="18" cy="18" r="18"/>
+            <path d="M36 18c0-9.94-8.06-18-18-18">
+              <animateTransform attributeName="transform" type="rotate" from="0 18 18" to="360 18 18" dur="1s" repeatCount="indefinite"/>
+            </path>
+          </g>
+        </g>
+      </svg>
+      <p style="color: #71767B; margin-top: 1em;">Loading X posts...</p>
+    </div>
+  </div>
+  
+  <div class="load-more">
+    <button class="load-more-btn" id="load-more-posts">Show more posts</button>
+  </div>
+</div>
       <div id="terms">
         <h2>📜 Terms of Use</h2>
         <p>This website presents publicly contributed and publicly sourced information concerning the death of Albert Ojwang. While we aim to keep the timeline and events accurate and well-documented, no guarantee is given regarding completeness or correctness.</p>
@@ -613,6 +651,147 @@
 
     loadReports();
   </script>
+<script>
 
+ // X Feed Functionality
+document.addEventListener('DOMContentLoaded', function() {
+  // Filter buttons
+  const filterButtons = document.querySelectorAll('.x-filter-btn');
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      fetchXPosts();
+    });
+  });
+  
+  // Load more posts button
+  document.getElementById('load-more-posts').addEventListener('click', fetchXPosts);
+  
+  // Initial fetch
+  fetchXPosts();
+  
+  // Existing case reports functionality
+  loadReports();
+  setupReportForm();
+});
+
+let currentPage = 1;
+const postsPerPage = 2;
+
+async function fetchXPosts() {
+  try {
+    const filter = document.querySelector('.x-filter-btn.active').dataset.filter;
+    const response = await fetch(`/api/x-posts?filter=${filter}&page=${currentPage}`);
+    const posts = await response.json();
+    
+    if (currentPage === 1) {
+      renderXPosts(posts);
+    } else {
+      appendXPosts(posts);
+    }
+    
+    currentPage++;
+    
+    // Hide load more button if no more posts
+    if (posts.length < postsPerPage) {
+      document.getElementById('load-more-posts').style.display = 'none';
+    }
+  } catch (error) {
+    console.error('Error fetching X posts:', error);
+    document.getElementById('x-posts-container').innerHTML = 
+      '<div class="error">Failed to load posts. Please try again later.</div>';
+  }
+}
+
+function renderXPosts(posts) {
+  const container = document.getElementById('x-posts-container');
+  container.innerHTML = '';
+  
+  if (posts.length === 0) {
+    container.innerHTML = '<div class="no-posts">No posts found. Check back later.</div>';
+    return;
+  }
+  
+  posts.forEach(post => {
+    container.appendChild(createPostElement(post));
+  });
+}
+
+function appendXPosts(posts) {
+  const container = document.getElementById('x-posts-container');
+  posts.forEach(post => {
+    container.appendChild(createPostElement(post));
+  });
+}
+
+function createPostElement(post) {
+  const postEl = document.createElement('div');
+  postEl.className = 'x-post';
+  
+  let mediaHTML = '';
+  if (post.media && post.media.length > 0) {
+    mediaHTML = post.media.map(media => {
+      if (media.type === 'photo') {
+        return `<div class="x-media"><img src="${media.url}" alt="Post media"></div>`;
+      } else if (media.type === 'video') {
+        return `<div class="x-media video"><img src="${media.url}" alt="Video thumbnail"></div>`;
+      }
+      return '';
+    }).join('');
+  }
+  
+  postEl.innerHTML = `
+    <img src="${post.avatar}" alt="Profile" class="x-avatar" onerror="this.src='https://abs.twimg.com/sticky/default_profile_images/default_profile_bigger.png'">
+    <div class="x-content">
+      <div class="x-user">
+        <span class="x-name">${post.name}</span>
+        <span class="x-username">@${post.username}</span>
+        <span class="x-time">${post.time}</span>
+      </div>
+      <p class="x-text">${post.text}</p>
+      ${mediaHTML}
+      <div class="x-actions">
+        <span class="x-action">
+          <svg viewBox="0 0 24 24"><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"/></svg>
+          ${post.replies}
+        </span>
+        <span class="x-action">
+          <svg viewBox="0 0 24 24"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"/></svg>
+          ${post.reposts}
+        </span>
+        <span class="x-action">
+          <svg viewBox="0 0 24 24"><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"/></svg>
+          ${post.likes}
+        </span>
+        <span class="x-action">
+          <svg viewBox="0 0 24 24"><path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"/></svg>
+          ${post.views}
+        </span>
+      </div>
+    </div>
+  `;
+  
+  return postEl;
+}
+
+// Your existing case reports functions
+async function loadReports() {
+  try {
+    const res = await fetch('/api/reports');
+    const reports = await res.json();
+    // ... rest of your existing implementation
+  } catch (err) {
+    console.error('Failed to load reports:', err);
+  }
+}
+
+function setupReportForm() {
+  document.getElementById('submission-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    // ... rest of your existing implementation
+  });
+}
+</script>
 </body>
 </html>

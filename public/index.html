@@ -4,47 +4,547 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Albert Ojwang Case Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Satoshi:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; margin: 2em; background: #f9f9f9; color: #333; }
-    nav a { margin-right: 1em; text-decoration: none; color: #007BFF; }
-    nav a:hover { text-decoration: underline; }
-    h1, h2 { color: #222; }
-    section { margin-bottom: 2em; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1em; }
-    th, td { border: 1px solid #ddd; padding: 0.75em; text-align: left; vertical-align: top; }
-    th { background-color: #eee; }
-    .highlight { background-color: #fff3cd; }
-    .conflict { background-color: #f8d7da; }
-    .loading { font-style: italic; color: #666; }
+    :root {
+      --kenya-black: #000000;
+      --kenya-red: #BB0000;
+      --kenya-green: #006600;
+      --kenya-white: #FFFFFF;
+      --kenya-gray: #F0F0F0;
+      --x-black: #000000;
+      --x-dark-gray: #16181C;
+      --x-light-gray: #EFF3F4;
+      --x-blue: #1D9BF0;
+    }
+    
+    body {
+      font-family: 'Satoshi', Arial, sans-serif;
+      margin: 0;
+      background: var(--kenya-gray);
+      color: var(--kenya-black);
+      line-height: 1.6;
+    }
+    
+    header {
+      background: linear-gradient(to right, var(--kenya-black), var(--kenya-red), var(--kenya-green));
+      color: var(--kenya-white);
+      padding: 1.5em;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      font-weight: 700;
+      font-size: 2.2rem;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+    
+    nav {
+      background: var(--kenya-white);
+      padding: 0.75em 1.5em;
+      border-bottom: 3px solid var(--kenya-red);
+      display: flex;
+      gap: 1.5em;
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: var(--kenya-black);
+      font-weight: 500;
+      font-size: 1.05rem;
+      transition: all 0.3s ease;
+      padding: 0.5em 0;
+      position: relative;
+    }
+    
+    nav a:hover {
+      color: var(--kenya-red);
+    }
+    
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--kenya-green);
+      transition: width 0.3s ease;
+    }
+    
+    nav a:hover::after {
+      width: 100%;
+    }
+    
+    main {
+      display: flex;
+      flex-direction: row;
+      padding: 1.5em;
+      gap: 1.5em;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    
+    aside {
+      flex: 1;
+      max-width: 300px;
+      padding: 1.5em;
+      background: var(--kenya-white);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-top: 4px solid var(--kenya-green);
+    }
+    
+    .right-sidebar {
+      flex: 1;
+      max-width: 300px;
+      padding: 1.5em;
+      background: var(--kenya-white);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-top: 4px solid var(--kenya-black);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5em;
+    }
+    
+    section {
+      flex: 3;
+      padding: 1.5em;
+      background: var(--kenya-white);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-top: 4px solid var(--kenya-red);
+    }
+    
+    h2 {
+      color: var(--kenya-black);
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin-top: 0;
+      margin-bottom: 1em;
+      padding-bottom: 0.5em;
+      border-bottom: 2px solid var(--kenya-gray);
+    }
+    
+    h3 {
+      color: var(--kenya-black);
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1em;
+      font-size: 0.95rem;
+    }
+    
+    th {
+      background-color: var(--kenya-black);
+      color: var(--kenya-white);
+      font-weight: 500;
+      padding: 1em;
+      text-align: left;
+    }
+    
+    td {
+      border: 1px solid var(--kenya-gray);
+      padding: 1em;
+      background: var(--kenya-white);
+    }
+    
+    .conflict {
+      background-color: rgba(187, 0, 0, 0.08);
+      border-left: 3px solid var(--kenya-red);
+    }
+    
+    form label {
+      display: block;
+      margin: 1em 0 0.5em;
+      font-weight: 500;
+      color: var(--kenya-black);
+    }
+    
+    form input, form textarea, form select {
+      width: 100%;
+      padding: 0.8em;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: 'Satoshi', sans-serif;
+      transition: border 0.3s ease;
+    }
+    
+    form input:focus, form textarea:focus, form select:focus {
+      outline: none;
+      border-color: var(--kenya-green);
+      box-shadow: 0 0 0 2px rgba(0, 102, 0, 0.2);
+    }
+    
+    form button {
+      background: var(--kenya-black);
+      color: white;
+      border: none;
+      padding: 0.8em 1.5em;
+      margin-top: 1.5em;
+      border-radius: 4px;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    
+    form button:hover {
+      background: var(--kenya-red);
+      transform: translateY(-1px);
+    }
+    
+    footer {
+      background: var(--kenya-black);
+      color: var(--kenya-white);
+      padding: 1.5em;
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 2em;
+    }
+    
+    .gallery-image {
+      width: 100%;
+      border-radius: 6px;
+      margin-bottom: 0.5em;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .gallery-image:hover {
+      transform: scale(1.02);
+    }
+    
+    .image-caption {
+      font-size: 0.85rem;
+      text-align: center;
+      color: #666;
+      margin-top: -0.5em;
+      margin-bottom: 1.5em;
+    }
+    
+    .sidebar-title {
+      color: var(--kenya-black);
+      border-bottom: 2px solid var(--kenya-gray);
+      padding-bottom: 0.5em;
+      margin-bottom: 1em;
+      font-weight: 600;
+      font-size: 1.3rem;
+    }
+    
+    #form-response {
+      margin-top: 1em;
+      padding: 0.5em;
+      border-radius: 4px;
+      text-align: center;
+      font-weight: 500;
+    }
+    
+    ul {
+      padding-left: 1.5em;
+    }
+    
+    li {
+      margin-bottom: 0.5em;
+    }
+    
+    strong {
+      color: var(--kenya-black);
+    }
+    
+    @media (max-width: 1200px) {
+      main {
+        flex-direction: column;
+      }
+      
+      aside, .right-sidebar, section {
+        max-width: 100%;
+      }
+    }
+    /* X Feed Section */
+    .x-feed {
+      margin-top: 3em;
+      background: var(--x-black);
+      border-radius: 16px;
+      padding: 1.5em;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      color: white;
+    }
+    
+    .x-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5em;
+    }
+    
+    .x-logo {
+      width: 28px;
+      height: 28px;
+      margin-right: 12px;
+    }
+    
+    .x-filters {
+      display: flex;
+      gap: 0.8em;
+      margin-bottom: 1.5em;
+      flex-wrap: wrap;
+    }
+    
+    .x-filter-btn {
+      padding: 0.6em 1.2em;
+      background: var(--x-dark-gray);
+      border: none;
+      border-radius: 9999px;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 500;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+    
+    .x-filter-btn.active {
+      background: var(--x-light-gray);
+      color: var(--x-black);
+    }
+    
+    .x-filter-btn:hover {
+      background: #2C2F33;
+    }
+    
+    .x-post {
+      display: flex;
+      padding: 1.2em 0;
+      border-bottom: 1px solid #2F3336;
+    }
+    
+    .x-post:last-child {
+      border-bottom: none;
+    }
+    
+    .x-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-right: 1em;
+      object-fit: cover;
+    }
+    
+    .x-content {
+      flex: 1;
+    }
+    
+    .x-user {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.4em;
+    }
+    
+    .x-name {
+      font-weight: 700;
+      margin-right: 0.5em;
+    }
+    
+    .x-username {
+      color: #71767B;
+      margin-right: 0.5em;
+    }
+    
+    .x-time {
+      color: #71767B;
+      font-size: 0.9em;
+    }
+    
+    .x-text {
+      margin-bottom: 0.8em;
+      line-height: 1.5;
+    }
+    
+    .x-actions {
+      display: flex;
+      gap: 1.2em;
+      margin-top: 0.8em;
+    }
+    
+    .x-action {
+      display: flex;
+      align-items: center;
+      color: #71767B;
+      font-size: 0.9em;
+      transition: color 0.2s ease;
+    }
+    
+    .x-action:hover {
+      color: var(--x-blue);
+    }
+    
+    .x-action svg {
+      width: 18px;
+      height: 18px;
+      margin-right: 0.3em;
+      fill: currentColor;
+    }
+    
+    .x-media {
+      margin-top: 1em;
+      border-radius: 16px;
+      overflow: hidden;
+      max-width: 100%;
+      border: 1px solid #2F3336;
+    }
+    
+    .x-media img {
+      width: 100%;
+      display: block;
+    }
+    
+    .load-more {
+      text-align: center;
+      margin-top: 1.5em;
+    }
+    
+    .load-more-btn {
+      background: transparent;
+      color: var(--x-blue);
+      border: 1px solid #2F3336;
+      padding: 0.8em 1.8em;
+      border-radius: 9999px;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .load-more-btn:hover {
+      background: rgba(29, 155, 240, 0.1);
+    }
   </style>
 </head>
 <body>
 
-  <h1>Albert Ojwang Case Tracker</h1>
+  <header>
+    <h1>Albert Ojwang Case Tracker</h1>
+  </header>
 
-  <section id="timeline-section">
-    <h2>🕒 Timeline of Events</h2>
-    <table>
-      <thead>
-        <tr><th>Date/Time</th><th>Description</th></tr>
-      </thead>
-      <tbody id="timeline-body">
-        <tr><td colspan="2" class="loading">Loading...</td></tr>
-      </tbody>
-    </table>
-  </section>
+  <nav>
+    <a href="#timeline">🕒 Timelines</a>
+    <a href="#conflicts">⚠️ Contradictions</a>
+    <a href="#terms">📜 Terms of Use</a>
+  </nav>
 
-  <section id="conflicts-section">
-    <h2>🔍 Contradictions in Official Narrative</h2>
-    <table>
-      <thead>
-        <tr><th>Issue</th><th>Description</th></tr>
-      </thead>
-      <tbody id="conflict-body">
-        <tr><td colspan="2" class="loading">Loading...</td></tr>
-      </tbody>
-    </table>
-  </section>
+  <main>
+    <aside>
+      <h2 class="sidebar-title">✍️ Submit Information</h2>
+      <form id="submission-form">
+        <label for="category">Type:</label>
+        <select name="category" id="category" required>
+          <option value="">--Select--</option>
+          <option value="timeline">Timeline Event</option>
+          <option value="conflict">Contradiction</option>
+        </select>
+        
+        <label for="datetime">Date/Time:</label>
+        <input type="datetime-local" name="datetime" id="datetime" required />
+        
+        <label for="issue">Title or Issue:</label>
+        <input type="text" name="issue" id="issue" />
+        
+        <label for="description">Description:</label>
+        <textarea name="description" id="description" rows="4" required></textarea>
+        
+        <label for="source">Source:</label>
+        <input type="text" name="source" id="source" />
+        
+        <label for="submittedBy">Your Name:</label>
+        <input type="text" name="submittedBy" id="submittedBy" />
+        
+        <button type="submit">Submit Information</button>
+        <div id="form-response"></div>
+      </form>
+    </aside>
+
+    <section>
+      <div id="timeline">
+        <h2>🕒 Timeline of Events</h2>
+        <table>
+          <thead>
+            <tr><th>Date/Time</th><th>Description</th></tr>
+          </thead>
+          <tbody id="timeline-body">
+            <tr><td colspan="2">Loading timeline data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="conflicts">
+        <h2>⚠️ Contradictions in Official Narrative</h2>
+        <table>
+          <thead>
+            <tr><th>Issue</th><th>Description</th></tr>
+          </thead>
+          <tbody id="conflict-body">
+            <tr><td colspan="2">Loading contradictions data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="terms">
+        <h2>📜 Terms of Use</h2>
+        <p>This website presents publicly contributed and publicly sourced information concerning the death of Albert Ojwang. While we aim to keep the timeline and events accurate and well-documented, no guarantee is given regarding completeness or correctness.</p>
+        <p>By using this website, you agree that:</p>
+        <ul>
+          <li>The site is intended for educational and informational purposes only.</li>
+          <li>Content is contributed by the public and may not have been independently verified.</li>
+          <li>No legal liability is assumed for the accuracy of any submission.</li>
+        </ul>
+        <p><strong>Disclaimer:</strong> The information on this website is aggregated from public sources. It is presented for educational use and public discourse. It does not represent any formal legal position or conclusion.</p>
+      </div>
+    </section>
+
+    <div class="right-sidebar">
+      <h2 class="sidebar-title">👤 Albert Ojwang</h2>
+      <div>
+        <img src="https://i0.wp.com/www.kbc.co.ke/wp-content/uploads/2025/06/WhatsApp-Image-2025-06-10-at-14.57.36.jpeg" alt="Albert Ojwang" class="gallery-image">
+        <p class="image-caption">Albert Ojwang in 2022</p>
+      </div>
+      <div>
+        <img src="https://www.kictanet.or.ke/wp-content/uploads/2025/06/Albert-Ojwang.webp" alt="Albert Ojwang" class="gallery-image">
+        <p class="image-caption">Public appearance in Nairobi</p>
+      </div>
+      
+      <div>
+        <h3 class="sidebar-title">Biographical Information</h3>
+        <p><strong>Full Name:</strong> Albert Ojwang</p>
+        <p><strong>Occupation:</strong> Teacher</p>
+        <p><strong>Date of Birth:</strong> 7th July 1994</p>
+        <p><strong>Date of Death:</strong> 8th June 2025</p>
+      </div>
+      
+      <div>
+        <h3 class="sidebar-title">Key Facts</h3>
+        <ul>
+          <li>Fact 1 about the case</li>
+          <li>Important detail about events</li>
+          <li>Notable aspect of investigation</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Albert Ojwang Case Tracker. Public Data. Educational Use Only.</p>
+    <p style="margin-top: 0.5em; font-size: 0.8em;">Justice for Albert Ojwang</p>
+  </footer>
 
   <script>
     async function loadReports() {
@@ -82,6 +582,34 @@
         console.error('Failed to load reports:', err);
       }
     }
+
+    document.getElementById('submission-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      data.date = data.datetime;
+
+      try {
+        const res = await fetch('/api/reports', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          document.getElementById('form-response').innerText = '✅ Submitted successfully';
+          document.getElementById('form-response').style.color = 'var(--kenya-green)';
+          form.reset();
+          loadReports();
+        } else {
+          throw new Error('Submission failed');
+        }
+      } catch (err) {
+        document.getElementById('form-response').innerText = '❌ Submission failed';
+        document.getElementById('form-response').style.color = 'var(--kenya-red)';
+      }
+    });
 
     loadReports();
   </script>

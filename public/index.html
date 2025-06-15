@@ -106,5 +106,20 @@
 
     loadData();
   </script>
+  <script>
+  fetch('/api/reports')
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.querySelector('tbody');
+      tbody.innerHTML = ''; // clear
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.className = row.category === 'conflict' ? 'conflict' : '';
+        tr.innerHTML = `<td>${row.date}</td><td>${row.description}</td>`;
+        tbody.appendChild(tr);
+      });
+    });
+</script>
+
 </body>
 </html>
